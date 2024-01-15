@@ -2,9 +2,7 @@ package com.medilabosolutions.back.controllers;
 
 import com.medilabosolutions.back.dao.PatientDao;
 import com.medilabosolutions.back.model.Patient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,6 +22,11 @@ public class PatientController {
 	@GetMapping(value = "/Patients/{id}")
 	public Patient afficherUnPatient(@PathVariable int id) {
 		return patientDao.findById(id);
+	}
+
+	@PostMapping(value = "/Patients")
+	public void ajouterPatient(@RequestBody Patient patient) {
+		patientDao.save(patient);
 	}
 }
 

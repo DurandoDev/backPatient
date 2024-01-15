@@ -1,5 +1,9 @@
 package com.medilabosolutions.back.model;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import javax.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -7,11 +11,18 @@ import java.time.LocalDate;
 @Data
 public class Patient {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	int id;
+	@NotBlank (message = "Firstname is mandatory")
 	String firstname;
+	@NotBlank (message = "Name is mandatory")
 	String name;
+	@NotBlank (message = "Date of birth is mandatory")
 	LocalDate dateOfBirth;
+	@NotBlank(message = "Gender is mandatory")
 	String gender;
+
 	String address;
 	String phoneNumber;
 	public Patient(){
