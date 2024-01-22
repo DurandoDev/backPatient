@@ -2,7 +2,6 @@ package com.medilabosolutions.back.controllers;
 
 import com.medilabosolutions.back.repository.PatientRepo;
 import com.medilabosolutions.back.model.Patient;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -67,6 +66,9 @@ public class PatientController {
 		}
 	}
 
-
+	@DeleteMapping("/Patients/{id}")
+	public void retirerUnPatient(@PathVariable int id) {
+		 patientRepo.deleteById(id);
+	}
 }
 
