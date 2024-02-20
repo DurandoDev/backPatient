@@ -1,7 +1,7 @@
-package com.medilabosolutions.back;
+package com.medilabosolutions;
 
-import com.medilabosolutions.back.model.Patient;
-import com.medilabosolutions.back.repository.PatientRepo;
+import com.medilabosolutions.model.Patient;
+import com.medilabosolutions.repository.PatientRepo;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

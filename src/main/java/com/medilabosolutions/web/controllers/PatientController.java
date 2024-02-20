@@ -1,7 +1,9 @@
-package com.medilabosolutions.back.controllers;
+package com.medilabosolutions.web.controllers;
 
-import com.medilabosolutions.back.repository.PatientRepo;
-import com.medilabosolutions.back.model.Patient;
+import com.medilabosolutions.repository.PatientRepo;
+import com.medilabosolutions.model.Patient;
+import com.medilabosolutions.web.exceptions.PatientNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -14,23 +16,44 @@ import java.util.Optional;
 @RestController
 public class PatientController {
 
-	private final PatientRepo patientRepo;
+	@Autowired
+	PatientRepo patientRepo;
 
-	public PatientController(PatientRepo patientRepo){
-		this.patientRepo = patientRepo;
-	}
-
-	@GetMapping("/Patients")
+	//Afficher la liste des patients
+	@GetMapping("/patients")
 	public List<Patient> listePatients() {
-		return patientRepo.findAll();
+		List<Patient> patients = patientRepo.findAll();
+
+		if (patients.isEmpty()) throw new PatientNotFoundException("Aucun patient n'est enregistré");
+
+		return patients;
 	}
 
-	@GetMapping("/Patients/{id}")
+	//Récupérer un patient par son id
+	@GetMapping("/patients/{id}")
 	public Patient afficherUnPatient(@PathVariable int id) {
-		return patientRepo.findById(id);
+		return patientRepo.findById(id)
+				.orElseThrow(() -> new PatientNotFoundException("Le patient correspondant à l'id " + id + " n'existe pas"));
 	}
 
-	@PostMapping("/Patients")
+	//Chercher un patient en fonction d'un parametre de recherche
+	@GetMapping("/patients/search")
+	public List<Patient> searchPatients(@RequestParam String searchType, @RequestParam String value) {
+		switch(searchType) {
+			case "name":
+				return patientRepo.findByName(value);
+			case "firstname":
+				return patientRepo.findByFirstname(value);
+			case "yearOfBirth":
+				int year = Integer.parseInt(value);
+				return patientRepo.findByYearOfBirth(year);
+			default:
+				return List.of();
+		}
+	}
+
+	//Ajouter un nouveau patient
+	@PostMapping("/patients")
 	public ResponseEntity<Patient> ajouterPatient(@RequestBody Patient patient) {
 		Patient patientAdded = patientRepo.save(patient);
 		if (Objects.isNull(patientAdded)){
@@ -44,9 +67,10 @@ public class PatientController {
 		return ResponseEntity.created(location).build();
 	}
 
-	@PutMapping("/Patients/{id}")
+	//Modifier les caractéristiques d'un patient par son id
+	@PutMapping("/patients/update/{id}")
 	public ResponseEntity<Patient> updatePatient(@PathVariable int id, @RequestBody Patient updatedPatient) {
-		Optional<Patient> optionalExistingPatient = Optional.ofNullable(patientRepo.findById(id));
+		Optional<Patient> optionalExistingPatient = patientRepo.findById(id);
 
 		if (optionalExistingPatient.isPresent()) {
 			Patient existingPatient = optionalExistingPatient.get();
@@ -66,7 +90,8 @@ public class PatientController {
 		}
 	}
 
-	@DeleteMapping("/Patients/{id}")
+	//Supprimer un patient par son id
+	@DeleteMapping("/patients/delete/{id}")
 	public void retirerUnPatient(@PathVariable int id) {
 		 patientRepo.deleteById(id);
 	}

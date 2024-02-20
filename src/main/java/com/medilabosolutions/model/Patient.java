@@ -1,4 +1,4 @@
-package com.medilabosolutions.back.model;
+package com.medilabosolutions.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 @Data
 @Entity
-@JsonIgnoreProperties(value = {"id"})
 public class Patient {
 
 	@Id
