@@ -10,6 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.hamcrest.Matchers.*;
@@ -28,13 +31,15 @@ public class PatientControllerTest {
 	@Autowired
 	MockMvc mockMvc;
 
-	Patient p = new Patient();
+	Patient p;
 
 	Integer patientId;
 
+	private List<Integer> createdPatientIds = new ArrayList<>();
+
 	@BeforeEach
 	public void setup() throws Exception {
-		Patient p = new Patient();
+		p = new Patient();
 		p.setFirstname("toto");
 		p.setName("totoName");
 		p.setAddress("totoAddress");
@@ -42,7 +47,7 @@ public class PatientControllerTest {
 		p.setDateOfBirth(LocalDate.parse("2001-01-01"));
 		p.setPhoneNumber("1111-222-333");
 
-		MvcResult result = mockMvc.perform(post("/Patients")
+		MvcResult result = mockMvc.perform(post("/patients")
 						.content("{\"firstname\":\"" + p.getFirstname() + "\"," +
 								"\"name\":\"" + p.getName() + "\"," +
 								"\"dateOfBirth\":\"" + p.getDateOfBirth() + "\"," +
@@ -55,23 +60,27 @@ public class PatientControllerTest {
 				.andReturn();
 
 		String location = result.getResponse().getHeader("Location");
-		String[] segments = location.split("/");
-		patientId = Integer.parseInt(segments[segments.length - 1]);
+		patientId = Integer.parseInt(location.substring(location.lastIndexOf('/') + 1));
 	}
 
 	@AfterEach
-	public void deleteSetup() throws Exception {
-		patientRepo.delete(p);
+	public void deleteSetup() {
+		if (patientId != null) {
+			patientRepo.deleteById(patientId);
+		}
 	}
 
 	@AfterAll
-	public void deleteTestData() throws Exception {
-		patientRepo.deleteAll();
+	public void cleanUp() {
+		for (Integer patientId : createdPatientIds) {
+			patientRepo.deleteById(patientId);
+		}
 	}
+
 
 	@Test
 	public void listPatientTest() throws Exception {
-		mockMvc.perform(get("/Patients")
+		mockMvc.perform(get("/patients")
 						.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(content()
@@ -81,7 +90,7 @@ public class PatientControllerTest {
 
 	@Test
 	public void addPatientTest() throws Exception {
-		mockMvc.perform(post("/Patients")
+		MvcResult result = mockMvc.perform(post("/patients")
 						.content("{\"firstname\":\"tata\"," +
 								"\"name\":\"tataName\"," +
 								"\"dateOfBirth\":\"2001-01-01\"," +
@@ -90,19 +99,24 @@ public class PatientControllerTest {
 								"\"phoneNumber\":\"9999-111-222\"}")
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isCreated());
+				.andExpect(status().isCreated())
+				.andReturn();
+
+		String location = result.getResponse().getHeader("Location");
+		Integer createdPatientId = Integer.parseInt(location.substring(location.lastIndexOf('/') + 1));
+		createdPatientIds.add(createdPatientId);
 	}
 
 	@Test
 	public void deletePatientTest() throws Exception {
 		Patient newPatient = new Patient(9999,"tutu","tutuName",LocalDate.parse("2001-01-01"),"M","tutuAddress","999-999-999");
-		mockMvc.perform(delete("/Patients/{id}", 9999))
+		mockMvc.perform(delete("/patients/delete/{id}", 9999))
 				.andExpect(status().isOk());
 	}
 
 	@Test
 	public void updatePatientTest() throws Exception {
-		mockMvc.perform(put("/Patients/{id}",patientId)
+		mockMvc.perform(put("/patients/update/{id}",patientId)
 						.content("{\"firstname\":\"totoUpdated\"," +
 								"\"name\":\"totoNameUpdated\"," +
 								"\"dateOfBirth\":\"2001-01-01\"," +

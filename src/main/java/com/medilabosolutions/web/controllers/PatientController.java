@@ -14,13 +14,14 @@ import java.util.Objects;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/patients")
 public class PatientController {
 
 	@Autowired
 	PatientRepo patientRepo;
 
 	//Afficher la liste des patients
-	@GetMapping("/patients")
+	@GetMapping
 	public List<Patient> listePatients() {
 		List<Patient> patients = patientRepo.findAll();
 
@@ -30,14 +31,14 @@ public class PatientController {
 	}
 
 	//Récupérer un patient par son id
-	@GetMapping("/patients/{id}")
+	@GetMapping("/{id}")
 	public Patient afficherUnPatient(@PathVariable int id) {
 		return patientRepo.findById(id)
 				.orElseThrow(() -> new PatientNotFoundException("Le patient correspondant à l'id " + id + " n'existe pas"));
 	}
 
 	//Chercher un patient en fonction d'un parametre de recherche
-	@GetMapping("/patients/search")
+	@GetMapping("/search")
 	public List<Patient> searchPatients(@RequestParam String searchType, @RequestParam String value) {
 		switch(searchType) {
 			case "name":
@@ -53,7 +54,7 @@ public class PatientController {
 	}
 
 	//Ajouter un nouveau patient
-	@PostMapping("/patients")
+	@PostMapping
 	public ResponseEntity<Patient> ajouterPatient(@RequestBody Patient patient) {
 		Patient patientAdded = patientRepo.save(patient);
 		if (Objects.isNull(patientAdded)){
@@ -68,7 +69,7 @@ public class PatientController {
 	}
 
 	//Modifier les caractéristiques d'un patient par son id
-	@PutMapping("/patients/update/{id}")
+	@PutMapping("/update/{id}")
 	public ResponseEntity<Patient> updatePatient(@PathVariable int id, @RequestBody Patient updatedPatient) {
 		Optional<Patient> optionalExistingPatient = patientRepo.findById(id);
 
@@ -91,7 +92,7 @@ public class PatientController {
 	}
 
 	//Supprimer un patient par son id
-	@DeleteMapping("/patients/delete/{id}")
+	@DeleteMapping("/delete/{id}")
 	public void retirerUnPatient(@PathVariable int id) {
 		 patientRepo.deleteById(id);
 	}
