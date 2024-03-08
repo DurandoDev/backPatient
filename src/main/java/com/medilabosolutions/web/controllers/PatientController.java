@@ -25,7 +25,7 @@ public class PatientController {
 	public List<Patient> listePatients() {
 		List<Patient> patients = patientRepo.findAll();
 
-		if (patients.isEmpty()) throw new PatientNotFoundException("Aucun patient n'est enregistré");
+//		if (patients.isEmpty()) throw new PatientNotFoundException("Aucun patient n'est enregistré");
 
 		return patients;
 	}
