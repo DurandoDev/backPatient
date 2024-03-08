@@ -56,6 +56,7 @@ public class PatientController {
 	//Ajouter un nouveau patient
 	@PostMapping
 	public ResponseEntity<Patient> ajouterPatient(@RequestBody Patient patient) {
+		patient.setId(null);
 		Patient patientAdded = patientRepo.save(patient);
 		if (Objects.isNull(patientAdded)){
 			return ResponseEntity.noContent().build();

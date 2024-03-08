@@ -14,3 +14,5 @@ INSERT INTO patient (firstname, name, date_of_birth, gender, address, phone_numb
 SELECT * FROM (SELECT 'TestEarlyOnSet', 'Test', '2002-06-28', 'F', '4 Valley Dr', '400-555-6666') AS tmp
 WHERE NOT EXISTS (SELECT 1 FROM patient WHERE phone_number = '400-555-6666');
 
+ALTER TABLE patient AUTO_INCREMENT = 5 ENGINE=innoDB;
+

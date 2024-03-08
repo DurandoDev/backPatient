@@ -15,7 +15,7 @@ public class Patient {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	int id;
+	Integer id;
 
 	@NotBlank (message = "Firstname is mandatory")
 	String firstname;
