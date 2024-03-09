@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class Patient {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Integer id;
 
 	@NotBlank (message = "Firstname is mandatory")
