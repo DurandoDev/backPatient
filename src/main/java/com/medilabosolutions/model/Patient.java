@@ -1,6 +1,5 @@
 package com.medilabosolutions.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import javax.validation.constraints.NotBlank;
